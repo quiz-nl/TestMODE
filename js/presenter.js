@@ -192,4 +192,33 @@ function handleNewReaction(snapshot) {
     if (reactionsDisplay.children.length > 5) {
         reactionsDisplay.lastChild.remove();
     }
+}
+
+function setupEventListeners() {
+    // Luister naar knoppen in de presenter controls
+    const startRoundBtn = document.querySelector('button[onclick="startRound()"]');
+    const prevBtn = document.querySelector('button[onclick="previousQuestion()"]');
+    const nextBtn = document.querySelector('button[onclick="nextQuestion()"]');
+    const resultsBtn = document.querySelector('button[onclick="showResults()"]');
+
+    if (startRoundBtn) {
+        startRoundBtn.addEventListener('click', () => {
+            updateFirebaseGameState();
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            updateFirebaseGameState();
+        });
+    }
+}
+
+function updateFirebaseGameState() {
+    const gameRef = firebase.database().ref(`games/${presenterState.gameCode}`);
+    gameRef.update({
+        currentQuestion: presenterState.currentQuestion,
+        currentRound: presenterState.currentRound,
+        status: presenterState.isGameActive ? 'active' : 'waiting'
+    });
 } 
