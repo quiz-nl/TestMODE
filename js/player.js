@@ -58,17 +58,18 @@ function joinGame() {
                 return;
             }
             
-            // Update UI - verberg welkom scherm en toon game scherm
+            // Update UI
             document.getElementById('welcome-screen').style.display = 'none';
             document.getElementById('game-screen').style.display = 'block';
             document.getElementById('display-name').textContent = playerName;
             document.getElementById('current-game-code').textContent = gameCode;
             
-            // Voeg speler toe aan Firebase
+            // Voeg speler toe aan Firebase met de juiste structuur
             gameRef.child('players').child(playerName).set({
                 name: playerName,
                 score: 0,
-                joinedAt: firebase.database.ServerValue.TIMESTAMP
+                joinedAt: firebase.database.ServerValue.TIMESTAMP,
+                lastAnswer: null
             });
             
             // Start met luisteren naar game updates
