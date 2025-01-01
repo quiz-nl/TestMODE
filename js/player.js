@@ -37,47 +37,46 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function joinGame() {
-    const gameCodeInput = document.getElementById('game-code');
-    const playerNameInput = document.getElementById('player-name');
-
-    if (!gameCodeInput || !playerNameInput) {
-        console.error('Kon de invoervelden niet vinden');
-        return;
-    }
-
-    const gameCode = gameCodeInput.value.trim().toUpperCase();
-    const playerName = playerNameInput.value.trim();
+    const gameCode = document.getElementById('game-code').value.toUpperCase();
+    const playerName = document.getElementById('player-name').value;
     
-    if (!gameCode) {
-        alert('Vul eerst de game code in!');
+    if (!gameCode || !playerName) {
+        alert('Vul beide velden in');
         return;
     }
-    if (!playerName) {
-        alert('Vul eerst je naam in!');
-        return;
-    }
-
-    // Controleer eerst of de game bestaat
+    
+    // Update playerState met de game informatie
+    playerState.gameCode = gameCode;
+    playerState.name = playerName;
+    
     const gameRef = firebase.database().ref(`games/${gameCode}`);
+    
     gameRef.once('value')
         .then((snapshot) => {
             if (!snapshot.exists()) {
-                alert('Deze game bestaat niet!');
+                alert('Game niet gevonden');
                 return;
             }
-
-            playerState.gameCode = gameCode;
-            playerState.name = playerName;
             
-            // Voeg speler toe aan de game
-            return gameRef.child(`players/${playerName}`).set(0);
-        })
-        .then(() => {
-            updateGameDisplay(gameCode, playerName);
+            // Update UI - verberg welkom scherm en toon game scherm
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'block';
+            document.getElementById('display-name').textContent = playerName;
+            document.getElementById('current-game-code').textContent = gameCode;
+            
+            // Voeg speler toe aan Firebase
+            gameRef.child('players').child(playerName).set({
+                name: playerName,
+                score: 0,
+                joinedAt: firebase.database.ServerValue.TIMESTAMP
+            });
+            
+            // Start met luisteren naar game updates
             initGameListeners();
         })
         .catch(error => {
-            alert('Kon niet deelnemen aan het spel: ' + error.message);
+            console.error('Error joining game:', error);
+            alert('Er ging iets mis bij het joinen van de game');
         });
 }
 
