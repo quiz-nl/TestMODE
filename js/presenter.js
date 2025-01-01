@@ -221,4 +221,41 @@ function updateFirebaseGameState() {
         currentRound: presenterState.currentRound,
         status: presenterState.isGameActive ? 'active' : 'waiting'
     });
+}
+
+function updateQuestionDisplay() {
+    const rondeData = quizData[`ronde${presenterState.currentRound}`];
+    if (!rondeData) {
+        showResults();
+        return;
+    }
+
+    const vraag = rondeData.vragen[presenterState.currentQuestion];
+    if (!vraag) {
+        presenterState.currentRound++;
+        presenterState.currentQuestion = 0;
+        updateQuestionDisplay();
+        return;
+    }
+
+    const questionDisplay = document.getElementById('question-display');
+    if (questionDisplay) {
+        questionDisplay.innerHTML = `
+            <div class="question-container animate__animated animate__fadeIn">
+                <h2>Ronde ${presenterState.currentRound}: ${rondeData.titel}</h2>
+                <p class="question-text">${vraag.vraag}</p>
+                <div class="options-grid">
+                    ${vraag.opties.map((optie, index) => `
+                        <div class="option">
+                            <span class="option-letter">${String.fromCharCode(65 + index)}</span>
+                            <span class="option-text">${optie}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    // Update Firebase met de nieuwe vraag status
+    updateFirebaseGameState();
 } 
