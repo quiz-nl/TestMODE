@@ -279,4 +279,25 @@ body {
 
 .player-score {
     color: #4CAF50;
+}
+
+.input-field {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 16px;
+}
+
+.input-field::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+#game-code {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: bold;
 } 
