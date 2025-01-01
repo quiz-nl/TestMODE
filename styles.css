@@ -253,4 +253,30 @@ body {
 @keyframes countdown {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
+}
+
+.players-list {
+    margin: 20px auto;
+    max-width: 600px;
+}
+
+.player-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px;
+    margin: 5px 0;
+}
+
+.player-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.player-name {
+    font-weight: bold;
+}
+
+.player-score {
+    color: #4CAF50;
 } 
