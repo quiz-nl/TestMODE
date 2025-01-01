@@ -143,8 +143,20 @@ function removeTwoWrongAnswers() {
 }
 
 function updateGameDisplay(gameCode, playerName) {
-    document.getElementById('welcome-screen').style.display = 'none';
-    document.getElementById('game-screen').style.display = 'block';
-    document.getElementById('display-name').textContent = playerName;
-    document.getElementById('current-game-code').textContent = gameCode;
+    // Eerst controleren of alle elementen bestaan
+    const welcomeScreen = document.getElementById('welcome-screen');
+    const gameScreen = document.getElementById('game-screen');
+    const displayName = document.getElementById('display-name');
+    const currentGameCode = document.getElementById('current-game-code');
+
+    if (!welcomeScreen || !gameScreen || !displayName || !currentGameCode) {
+        console.error('Kon niet alle benodigde elementen vinden');
+        return;
+    }
+
+    // Update de weergave
+    welcomeScreen.style.display = 'none';
+    gameScreen.style.display = 'block';
+    displayName.textContent = playerName;
+    currentGameCode.textContent = gameCode;
 } 
