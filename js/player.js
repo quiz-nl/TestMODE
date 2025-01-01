@@ -37,8 +37,16 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function joinGame() {
-    const gameCode = document.getElementById('game-code').value.trim().toUpperCase();
-    const playerName = document.getElementById('player-name').value.trim();
+    const gameCodeInput = document.getElementById('game-code');
+    const playerNameInput = document.getElementById('player-name');
+
+    if (!gameCodeInput || !playerNameInput) {
+        console.error('Kon de invoervelden niet vinden');
+        return;
+    }
+
+    const gameCode = gameCodeInput.value.trim().toUpperCase();
+    const playerName = playerNameInput.value.trim();
     
     if (!gameCode) {
         alert('Vul eerst de game code in!');
