@@ -314,4 +314,38 @@ body {
 #current-game-code {
     font-weight: bold;
     letter-spacing: 1px;
+}
+
+.timer-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.timer-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: conic-gradient(#4CAF50 100%, transparent 0%);
+    position: relative;
+}
+
+.timer-text {
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.option-btn.selected {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.option-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
 } 
