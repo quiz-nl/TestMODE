@@ -13,12 +13,26 @@ const playerState = {
 
 // Initialiseer speler bij laden
 document.addEventListener('DOMContentLoaded', () => {
-    // Haal game code uit URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     const gameCode = urlParams.get('game');
-    if (gameCode) {
+    const playerName = urlParams.get('name');
+
+    if (gameCode && playerName) {
         playerState.gameCode = gameCode;
-        document.getElementById('display-name').textContent = `Game: ${gameCode}`;
+        playerState.name = playerName;
+        
+        // Auto-join de game met de naam
+        const gameRef = firebase.database().ref(`games/${gameCode}/players/${playerName}`);
+        gameRef.set(0)
+            .then(() => {
+                document.getElementById('welcome-screen').style.display = 'none';
+                document.getElementById('game-screen').style.display = 'block';
+                document.getElementById('display-name').textContent = playerName;
+                initGameListeners();
+            })
+            .catch(error => {
+                alert('Kon niet deelnemen aan het spel: ' + error.message);
+            });
     }
 });
 
