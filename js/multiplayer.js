@@ -5,6 +5,13 @@ const gameState = {
     isHost: false
 };
 
+document.addEventListener('DOMContentLoaded', () => {
+    const testBtn = document.getElementById('testFirebaseBtn');
+    if (testBtn) {
+        testBtn.addEventListener('click', testFirebase);
+    }
+});
+
 // Debug functie
 function testFirebase() {
     console.log("Testing Firebase connection...");
