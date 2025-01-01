@@ -300,4 +300,18 @@ body {
     text-transform: uppercase;
     letter-spacing: 2px;
     font-weight: bold;
+}
+
+.game-code-display {
+    margin-left: 15px;
+    padding: 4px 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: #fff;
+}
+
+#current-game-code {
+    font-weight: bold;
+    letter-spacing: 1px;
 } 
