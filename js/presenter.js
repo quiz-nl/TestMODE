@@ -12,38 +12,78 @@ document.addEventListener('DOMContentLoaded', initPresenter);
 
 function initPresenter() {
     presenterState.gameCode = Math.random().toString(36).substr(2, 6).toUpperCase();
-    document.getElementById('game-code-display').textContent = presenterState.gameCode;
     
+    const gameCodeDisplay = document.getElementById('game-code-display');
+    if (gameCodeDisplay) {
+        gameCodeDisplay.textContent = presenterState.gameCode;
+    }
+
     initializeFirebase();
     setupEventListeners();
-    initializeQRCode();
+    generateQRCode();
 }
 
 function initializeFirebase() {
     const gameRef = firebase.database().ref(`games/${presenterState.gameCode}`);
+    
     gameRef.set({
         active: true,
         currentQuestion: 0,
         players: {},
         startTime: firebase.database.ServerValue.TIMESTAMP,
         currentRound: 1
-    });
+    }).then(() => {
+        console.log('Game succesvol aangemaakt:', presenterState.gameCode);
+        
+        gameRef.child('players').on('value', (snapshot) => {
+            const players = snapshot.val() || {};
+            updatePlayersList(players);
+        });
 
-    // Luister naar speler updates
-    gameRef.child('players').on('value', updatePlayersList);
-    gameRef.child('reactions').on('child_added', handleNewReaction);
+        gameRef.child('reactions').on('child_added', handleNewReaction);
+    }).catch(error => {
+        console.error('Fout bij aanmaken game:', error);
+        alert('Er ging iets mis bij het aanmaken van de game: ' + error.message);
+    });
 }
 
-function initializeQRCode() {
+function updatePlayersList(players) {
+    const playersList = document.getElementById('players-list');
+    if (!playersList) return;
+
+    const playersHTML = Object.entries(players)
+        .map(([name, score]) => `
+            <div class="player-card animate__animated animate__fadeIn">
+                <div class="player-info">
+                    <span class="player-name">${name}</span>
+                    <span class="player-score">${score} pts</span>
+                </div>
+            </div>
+        `).join('');
+
+    playersList.innerHTML = playersHTML;
+    
+    const playerCount = Object.keys(players).length;
+    const playerCountDisplay = document.getElementById('player-count');
+    if (playerCountDisplay) {
+        playerCountDisplay.textContent = playerCount;
+    }
+}
+
+function generateQRCode() {
     const gameUrl = `${window.location.origin}/player.html?game=${presenterState.gameCode}`;
-    QRCode.toCanvas(document.getElementById('qr-code'), gameUrl, {
-        width: 300,
-        margin: 2,
-        color: {
-            dark: '#000000',
-            light: '#ffffff'
-        }
-    });
+    const qrCodeContainer = document.getElementById('qr-code');
+    
+    if (qrCodeContainer && typeof QRCode !== 'undefined') {
+        QRCode.toCanvas(qrCodeContainer, gameUrl, {
+            width: 200,
+            margin: 2,
+            color: {
+                dark: '#4CAF50',
+                light: '#ffffff'
+            }
+        });
+    }
 }
 
 function startRound() {
@@ -115,15 +155,6 @@ function showResults() {
             </div>
         `;
     });
-}
-
-// Voeg deze helper functies toe aan het einde van het bestand
-function updatePlayersList(snapshot) {
-    const players = snapshot.val() || {};
-    const count = Object.keys(players).length;
-    document.getElementById('player-count').textContent = count;
-    
-    updateLeaderboard(players);
 }
 
 function handleNewReaction(snapshot) {
