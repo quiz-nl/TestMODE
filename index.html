@@ -32,6 +32,12 @@
 
     <!-- Initialiseer Firebase -->
     <script src="js/firebase-config.js"></script>
+    <script>
+        // Controleer of Firebase correct is geïnitialiseerd
+        if (typeof firebase === 'undefined') {
+            console.error('Firebase is niet correct geladen!');
+        }
+    </script>
     <script src="js/multiplayer.js"></script>
     <script src="js/quiz.js"></script>
 </body>
