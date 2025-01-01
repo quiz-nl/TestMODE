@@ -50,10 +50,6 @@ function joinGame() {
         return;
     }
     
-    // Update playerState met de game informatie
-    playerState.gameCode = gameCode;
-    playerState.name = playerName;
-    
     const gameRef = firebase.database().ref(`games/${gameCode}`);
     
     gameRef.once('value')
@@ -63,20 +59,17 @@ function joinGame() {
                 return;
             }
             
+            // Update playerState
+            playerState.gameCode = gameCode;
+            playerState.name = playerName;
+            
             // Update UI
-            document.getElementById('welcome-screen').style.display = 'none';
-            document.getElementById('game-screen').style.display = 'block';
-            document.getElementById('display-name').textContent = playerName;
-            document.getElementById('current-game-code').textContent = gameCode;
+            updateGameDisplay(gameCode, playerName);
             
-            // Voeg speler toe aan Firebase met de juiste structuur
-            gameRef.child('players').child(playerName).set({
-                name: playerName,
-                score: 0,
-                joinedAt: firebase.database.ServerValue.TIMESTAMP,
-                lastAnswer: null
-            });
-            
+            // Voeg speler toe aan Firebase (vereenvoudigd)
+            return gameRef.child('players').child(playerName).set(0);
+        })
+        .then(() => {
             // Start met luisteren naar game updates
             initGameListeners();
         })
