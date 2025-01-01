@@ -81,11 +81,59 @@ function joinGame() {
 
 function initGameListeners() {
     const gameRef = firebase.database().ref(`games/${playerState.gameCode}`);
+    
+    // Luister naar game status updates
     gameRef.on('value', (snapshot) => {
         const gameData = snapshot.val();
-        if (gameData.currentQuestion !== undefined) {
-            updateQuestionDisplay(gameData.currentQuestion);
+        if (!gameData) return;
+
+        // Update vraag weergave als de huidige vraag verandert
+        if (gameData.currentQuestion !== undefined && gameData.currentRound !== undefined) {
+            showCurrentQuestion(gameData.currentRound, gameData.currentQuestion);
         }
+    });
+}
+
+function showCurrentQuestion(round, questionNumber) {
+    const rondeData = quizData[`ronde${round}`];
+    if (!rondeData || !rondeData.vragen[questionNumber]) {
+        console.error('Vraag niet gevonden');
+        return;
+    }
+
+    const vraag = rondeData.vragen[questionNumber];
+    const gameScreen = document.getElementById('game-screen');
+    
+    // Voeg vraag sectie toe aan game-screen
+    const questionSection = document.createElement('div');
+    questionSection.className = 'question-section animate__animated animate__fadeIn';
+    questionSection.innerHTML = `
+        <h2>Ronde ${round}</h2>
+        <p class="question-text">${vraag.vraag}</p>
+        <div class="options-grid">
+            ${vraag.opties.map((optie, index) => `
+                <button onclick="submitAnswer(${index})" class="option-btn">
+                    <span class="option-letter">${String.fromCharCode(65 + index)}</span>
+                    <span class="option-text">${optie}</span>
+                </button>
+            `).join('')}
+        </div>
+    `;
+
+    // Vervang bestaande vraag sectie of voeg nieuwe toe
+    const existingQuestion = gameScreen.querySelector('.question-section');
+    if (existingQuestion) {
+        existingQuestion.replaceWith(questionSection);
+    } else {
+        gameScreen.appendChild(questionSection);
+    }
+}
+
+function submitAnswer(answerIndex) {
+    const gameRef = firebase.database().ref(`games/${playerState.gameCode}/players/${playerState.name}`);
+    gameRef.child('lastAnswer').set({
+        answer: answerIndex,
+        timestamp: firebase.database.ServerValue.TIMESTAMP
     });
 }
 
