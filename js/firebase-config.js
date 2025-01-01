@@ -1,7 +1,4 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getDatabase } from "firebase/database";
-
+// Firebase configuratie
 const firebaseConfig = {
   apiKey: "AIzaSyAHjYlP64nW1Z8zTeO7izUE6wRedFPFxbI",
   authDomain: "quizz-3a0a2.firebaseapp.com",
@@ -13,7 +10,4 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-export { db }; 
+firebase.initializeApp(firebaseConfig); 
