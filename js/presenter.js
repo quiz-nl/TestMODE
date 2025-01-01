@@ -70,23 +70,17 @@ function updatePlayersList(players) {
     const playersList = document.getElementById('players-list');
     if (!playersList) return;
 
-    const playersHTML = Object.entries(players)
-        .map(([name, score]) => `
-            <div class="player-card animate__animated animate__fadeIn">
-                <div class="player-info">
-                    <span class="player-name">${name}</span>
-                    <span class="player-score">${score} pts</span>
-                </div>
+    const playersHTML = Object.entries(players).map(([name, data]) => {
+        const score = typeof data === 'object' ? (data.score || 0) : data;
+        return `
+            <div class="player-item">
+                <span class="player-name">${name}</span>
+                <span class="player-score">${score} pts</span>
             </div>
-        `).join('');
+        `;
+    }).join('');
 
     playersList.innerHTML = playersHTML;
-    
-    const playerCount = Object.keys(players).length;
-    const playerCountDisplay = document.getElementById('player-count');
-    if (playerCountDisplay) {
-        playerCountDisplay.textContent = playerCount;
-    }
 }
 
 function generateQRCode() {
