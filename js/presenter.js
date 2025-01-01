@@ -224,6 +224,12 @@ function updateFirebaseGameState() {
 }
 
 function updateQuestionDisplay() {
+    // Controleer of quizData beschikbaar is
+    if (typeof quizData === 'undefined') {
+        console.error('Quiz data is niet beschikbaar');
+        return;
+    }
+
     const rondeData = quizData[`ronde${presenterState.currentRound}`];
     if (!rondeData) {
         showResults();
