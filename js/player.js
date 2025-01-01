@@ -233,43 +233,35 @@ function updateGameDisplay(gameCode, playerName) {
 }
 
 function startTimer(duration) {
-    clearTimer();
-    let timeLeft = duration;
+    clearTimer(); // Zorg ervoor dat er geen andere timer loopt
     
-    const timerContainer = document.createElement('div');
-    timerContainer.className = 'timer-container';
-    timerContainer.innerHTML = `
-        <div class="timer-circle">
-            <span class="timer-text">${timeLeft}</span>
-        </div>
-    `;
+    const timerText = document.querySelector('.timer-text');
+    const timerCircle = document.querySelector('.timer-circle');
     
-    // Voeg timer toe aan het game-screen
-    const gameScreen = document.getElementById('game-screen');
-    const existingTimer = gameScreen.querySelector('.timer-container');
-    if (existingTimer) {
-        existingTimer.remove();
+    if (!timerText || !timerCircle) {
+        console.error('Timer elementen niet gevonden');
+        return;
     }
-    gameScreen.insertBefore(timerContainer, gameScreen.firstChild);
+    
+    let timeLeft = duration;
     
     playerState.timer = setInterval(() => {
         timeLeft--;
-        const timerText = timerContainer.querySelector('.timer-text');
+        
         if (timerText) {
             timerText.textContent = timeLeft;
         }
         
         const progress = (timeLeft / duration) * 100;
-        const timerCircle = timerContainer.querySelector('.timer-circle');
         if (timerCircle) {
             timerCircle.style.background = `conic-gradient(#4CAF50 ${progress}%, transparent ${progress}%)`;
         }
         
         if (timeLeft <= 0) {
             clearTimer();
-            // Forceer antwoord submission als er geen antwoord is gegeven
+            // Als er geen antwoord is gegeven, stuur -1
             if (playerState.currentAnswer === null) {
-                submitAnswer(-1); // -1 voor geen antwoord
+                submitAnswer(-1);
             }
         }
     }, 1000);
