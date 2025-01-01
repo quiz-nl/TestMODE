@@ -23,16 +23,21 @@ document.addEventListener('DOMContentLoaded', () => {
         playerState.gameCode = gameCode;
         playerState.name = playerName;
         
-        // Auto-join de game met de naam
+        // Auto-join de game met de naam en volledige speler data
         const gameRef = firebase.database().ref(`games/${gameCode}/players/${playerName}`);
-        gameRef.set(0)
-            .then(() => {
-                updateGameDisplay(gameCode, playerName);
-                initGameListeners();
-            })
-            .catch(error => {
-                alert('Kon niet deelnemen aan het spel: ' + error.message);
-            });
+        gameRef.set({
+            name: playerName,
+            score: 0,
+            joinedAt: firebase.database.ServerValue.TIMESTAMP,
+            lastAnswer: null
+        })
+        .then(() => {
+            updateGameDisplay(gameCode, playerName);
+            initGameListeners();
+        })
+        .catch(error => {
+            alert('Kon niet deelnemen aan het spel: ' + error.message);
+        });
     }
 });
 
