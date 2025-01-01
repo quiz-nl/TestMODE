@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Presenter View</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+<body>
+    <div id="presenter-container" class="dark-theme">
+        <div class="presenter-header">
+            <h1>Oud & Nieuw Quiz 2024</h1>
+            <div class="game-info">
+                <span class="game-code">Game Code: <span id="game-code-display"></span></span>
+                <span class="player-count">Spelers: <span id="player-count">0</span></span>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="question-section">
+                <div id="current-question">
+                    <h2>Huidige Vraag</h2>
+                    <div id="question-display" class="animate__animated animate__fadeIn"></div>
+                    <div class="timer-display">
+                        <div id="timer-circle"></div>
+                        <span id="timer-text">20</span>
+                    </div>
+                </div>
+                
+                <div id="qr-code-container">
+                    <h3>Scan om mee te doen!</h3>
+                    <div id="qr-code"></div>
+                </div>
+            </div>
+
+            <div class="stats-section">
+                <div id="leaderboard">
+                    <h2>Live Scorebord</h2>
+                    <div id="scores-display"></div>
+                </div>
+                
+                <div id="reactions-feed">
+                    <h3>Live Reacties</h3>
+                    <div id="reactions-display"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="presenter-controls">
+            <button onclick="previousQuestion()" class="btn">⬅️ Vorige</button>
+            <button onclick="startRound()" class="btn">▶️ Start Ronde</button>
+            <button onclick="nextQuestion()" class="btn">Volgende ➡️</button>
+            <button onclick="showResults()" class="btn">🏆 Resultaten</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="js/quiz.js"></script>
+    <script src="js/presenter.js"></script>
+</body>
+</html> 

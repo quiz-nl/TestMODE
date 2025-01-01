@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oud & Nieuw Quiz 2024</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+<body>
+    <div id="quiz-container">
+        <div class="header-image">
+            <img src="Images/9439_nl.jpg" alt="Quiz Header" class="quiz-header-image">
+        </div>
+        <h1>Oud & Nieuw Quiz 2024</h1>
+        <div class="team-controls">
+            <button onclick="startMultiplayer()" class="btn">Start Multiplayer</button>
+            <button onclick="testFirebase()" class="btn">Test Firebase Connectie</button>
+        </div>
+        <div id="score-display"></div>
+        <div id="quiz-content"></div>
+        <div class="navigation">
+            <button id="startBtn" class="btn">Start Quiz</button>
+            <button id="nextBtn" class="btn" style="display:none">Volgende</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+    <!-- Initialiseer Firebase -->
+    <script src="js/firebase-config.js"></script>
+
+    <script src="multiplayer.js"></script>
+    <script src="quiz.js"></script>
+</body>
+</html>
