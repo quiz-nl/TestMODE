@@ -39,6 +39,7 @@ function startMultiplayer() {
     gameState.teamCode = Math.random().toString(36).substr(2, 6).toUpperCase();
     gameState.isHost = true;
 
+    // Maak eerst de game aan in Firebase
     const gameRef = firebase.database().ref(`games/${gameState.teamCode}`);
     gameRef.set({
         host: gameState.playerName,
@@ -47,8 +48,8 @@ function startMultiplayer() {
         active: true,
         timestamp: firebase.database.ServerValue.TIMESTAMP
     }).then(() => {
-        alert(`Game gestart! Team code: ${gameState.teamCode}`);
-        initGameListeners();
+        // Redirect naar player.html met de game code
+        window.location.href = `player.html?game=${gameState.teamCode}&name=${encodeURIComponent(playerName)}`;
     }).catch(error => {
         console.error("Error starting game:", error);
         alert("Er ging iets mis bij het starten van de game: " + error.message);
