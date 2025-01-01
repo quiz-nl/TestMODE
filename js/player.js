@@ -134,13 +134,12 @@ function showCurrentQuestion(round, questionNumber) {
 }
 
 function submitAnswer(answerIndex) {
-    // Voorkom dubbele antwoorden
     if (playerState.currentAnswer !== null) return;
     
     playerState.currentAnswer = answerIndex;
     const gameRef = firebase.database().ref(`games/${playerState.gameCode}`);
     
-    // Sla het antwoord op in Firebase
+    // Update speler score en antwoord
     gameRef.child('players').child(playerState.name).update({
         lastAnswer: {
             index: answerIndex,
@@ -148,14 +147,20 @@ function submitAnswer(answerIndex) {
         }
     });
 
-    // Markeer de gekozen optie
+    // Verberg de vraag en toon feedback
+    const questionSection = document.querySelector('.question-section');
+    if (questionSection) {
+        questionSection.innerHTML = `
+            <div class="feedback-container animate__animated animate__fadeIn">
+                <h3>Antwoord verzonden!</h3>
+                <p>Wacht op de volgende vraag...</p>
+            </div>
+        `;
+    }
+
+    // Disable alle antwoord knoppen
     const buttons = document.querySelectorAll('.option-btn');
-    buttons.forEach((btn, index) => {
-        btn.disabled = true;
-        if (index === answerIndex) {
-            btn.classList.add('selected');
-        }
-    });
+    buttons.forEach(btn => btn.disabled = true);
 }
 
 function usePowerUp(type) {
