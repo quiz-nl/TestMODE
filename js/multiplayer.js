@@ -6,7 +6,7 @@ const gameState = {
 };
 
 // Debug functie
-window.testFirebase = function() {
+function testFirebase() {
     console.log("Testing Firebase connection...");
     const testRef = firebase.database().ref('test');
     testRef.set({
@@ -19,7 +19,10 @@ window.testFirebase = function() {
         console.error('Firebase test mislukt:', error);
         alert('Firebase connectie mislukt: ' + error.message);
     });
-};
+}
+
+// Maak de functie globaal beschikbaar
+window.testFirebase = testFirebase;
 
 function startMultiplayer() {
     const playerName = prompt("Voer je naam in:");
@@ -66,4 +69,4 @@ function updateGameState(snapshot) {
 function initGameListeners() {
     const gameRef = firebase.database().ref(`games/${gameState.teamCode}`);
     gameRef.on('value', updateGameState);
-} 
+}
