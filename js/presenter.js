@@ -24,27 +24,46 @@ function initPresenter() {
 }
 
 function initializeFirebase() {
+    // Controleer eerst of Firebase correct is geïnitialiseerd
+    if (typeof firebase === 'undefined') {
+        console.error('Firebase is niet correct geladen!');
+        return;
+    }
+
     const gameRef = firebase.database().ref(`games/${presenterState.gameCode}`);
     
-    gameRef.set({
+    // Maak een nieuwe game aan met meer gedetailleerde structuur
+    const gameData = {
         active: true,
         currentQuestion: 0,
         players: {},
         startTime: firebase.database.ServerValue.TIMESTAMP,
-        currentRound: 1
-    }).then(() => {
-        console.log('Game succesvol aangemaakt:', presenterState.gameCode);
-        
-        gameRef.child('players').on('value', (snapshot) => {
-            const players = snapshot.val() || {};
-            updatePlayersList(players);
-        });
+        currentRound: 1,
+        gameCode: presenterState.gameCode,
+        status: 'waiting', // waiting, active, finished
+        settings: {
+            timePerQuestion: 20,
+            pointsPerQuestion: 10
+        }
+    };
 
-        gameRef.child('reactions').on('child_added', handleNewReaction);
-    }).catch(error => {
-        console.error('Fout bij aanmaken game:', error);
-        alert('Er ging iets mis bij het aanmaken van de game: ' + error.message);
-    });
+    gameRef.set(gameData)
+        .then(() => {
+            console.log('Game succesvol aangemaakt:', presenterState.gameCode);
+            
+            // Luister naar speler updates
+            gameRef.child('players').on('value', (snapshot) => {
+                const players = snapshot.val() || {};
+                updatePlayersList(players);
+            });
+
+            // Luister naar reacties
+            gameRef.child('reactions').on('child_added', handleNewReaction);
+        })
+        .catch(error => {
+            console.error('Fout bij aanmaken game:', error);
+            alert('Er ging iets mis bij het aanmaken van de game: ' + error.message);
+        });
 }
 
 function updatePlayersList(players) {
