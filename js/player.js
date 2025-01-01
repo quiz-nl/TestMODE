@@ -8,7 +8,9 @@ const playerState = {
         fiftyFifty: 2
     },
     streak: 0,
-    achievements: new Set()
+    achievements: new Set(),
+    currentAnswer: null,
+    timer: null
 };
 
 // Initialiseer speler bij laden
@@ -82,14 +84,18 @@ function joinGame() {
 function initGameListeners() {
     const gameRef = firebase.database().ref(`games/${playerState.gameCode}`);
     
-    // Luister naar game status updates
     gameRef.on('value', (snapshot) => {
         const gameData = snapshot.val();
         if (!gameData) return;
 
-        // Update vraag weergave als de huidige vraag verandert
         if (gameData.currentQuestion !== undefined && gameData.currentRound !== undefined) {
+            playerState.currentAnswer = null; // Reset het antwoord voor de nieuwe vraag
             showCurrentQuestion(gameData.currentRound, gameData.currentQuestion);
+            
+            // Start de timer als de game actief is
+            if (gameData.status === 'active') {
+                startTimer(20); // 20 seconden per vraag
+            }
         }
     });
 }
@@ -130,10 +136,27 @@ function showCurrentQuestion(round, questionNumber) {
 }
 
 function submitAnswer(answerIndex) {
-    const gameRef = firebase.database().ref(`games/${playerState.gameCode}/players/${playerState.name}`);
-    gameRef.child('lastAnswer').set({
-        answer: answerIndex,
-        timestamp: firebase.database.ServerValue.TIMESTAMP
+    // Voorkom dubbele antwoorden
+    if (playerState.currentAnswer !== null) return;
+    
+    playerState.currentAnswer = answerIndex;
+    const gameRef = firebase.database().ref(`games/${playerState.gameCode}`);
+    
+    // Sla het antwoord op in Firebase
+    gameRef.child('players').child(playerState.name).update({
+        lastAnswer: {
+            index: answerIndex,
+            timestamp: firebase.database.ServerValue.TIMESTAMP
+        }
+    });
+
+    // Markeer de gekozen optie
+    const buttons = document.querySelectorAll('.option-btn');
+    buttons.forEach((btn, index) => {
+        btn.disabled = true;
+        if (index === answerIndex) {
+            btn.classList.add('selected');
+        }
     });
 }
 
@@ -207,4 +230,54 @@ function updateGameDisplay(gameCode, playerName) {
     gameScreen.style.display = 'block';
     displayName.textContent = playerName;
     currentGameCode.textContent = gameCode;
+}
+
+function startTimer(duration) {
+    clearTimer();
+    let timeLeft = duration;
+    
+    const timerContainer = document.createElement('div');
+    timerContainer.className = 'timer-container';
+    timerContainer.innerHTML = `
+        <div class="timer-circle">
+            <span class="timer-text">${timeLeft}</span>
+        </div>
+    `;
+    
+    // Voeg timer toe aan het game-screen
+    const gameScreen = document.getElementById('game-screen');
+    const existingTimer = gameScreen.querySelector('.timer-container');
+    if (existingTimer) {
+        existingTimer.remove();
+    }
+    gameScreen.insertBefore(timerContainer, gameScreen.firstChild);
+    
+    playerState.timer = setInterval(() => {
+        timeLeft--;
+        const timerText = timerContainer.querySelector('.timer-text');
+        if (timerText) {
+            timerText.textContent = timeLeft;
+        }
+        
+        const progress = (timeLeft / duration) * 100;
+        const timerCircle = timerContainer.querySelector('.timer-circle');
+        if (timerCircle) {
+            timerCircle.style.background = `conic-gradient(#4CAF50 ${progress}%, transparent ${progress}%)`;
+        }
+        
+        if (timeLeft <= 0) {
+            clearTimer();
+            // Forceer antwoord submission als er geen antwoord is gegeven
+            if (playerState.currentAnswer === null) {
+                submitAnswer(-1); // -1 voor geen antwoord
+            }
+        }
+    }, 1000);
+}
+
+function clearTimer() {
+    if (playerState.timer) {
+        clearInterval(playerState.timer);
+        playerState.timer = null;
+    }
 } 
