@@ -25,9 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const gameRef = firebase.database().ref(`games/${gameCode}/players/${playerName}`);
         gameRef.set(0)
             .then(() => {
-                document.getElementById('welcome-screen').style.display = 'none';
-                document.getElementById('game-screen').style.display = 'block';
-                document.getElementById('display-name').textContent = playerName;
+                updateGameDisplay(gameCode, playerName);
                 initGameListeners();
             })
             .catch(error => {
@@ -73,9 +71,7 @@ function joinGame() {
             return gameRef.child(`players/${playerName}`).set(0);
         })
         .then(() => {
-            document.getElementById('welcome-screen').style.display = 'none';
-            document.getElementById('game-screen').style.display = 'block';
-            document.getElementById('display-name').textContent = playerName;
+            updateGameDisplay(gameCode, playerName);
             initGameListeners();
         })
         .catch(error => {
@@ -144,4 +140,11 @@ function activateDoublePoints() {
 
 function removeTwoWrongAnswers() {
     // Implementatie voor fifty-fifty
+}
+
+function updateGameDisplay(gameCode, playerName) {
+    document.getElementById('welcome-screen').style.display = 'none';
+    document.getElementById('game-screen').style.display = 'block';
+    document.getElementById('display-name').textContent = playerName;
+    document.getElementById('current-game-code').textContent = gameCode;
 } 
