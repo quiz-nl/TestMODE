@@ -37,16 +37,33 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function joinGame() {
+    const gameCode = document.getElementById('game-code').value.trim().toUpperCase();
     const playerName = document.getElementById('player-name').value.trim();
+    
+    if (!gameCode) {
+        alert('Vul eerst de game code in!');
+        return;
+    }
     if (!playerName) {
         alert('Vul eerst je naam in!');
         return;
     }
 
-    playerState.name = playerName;
-    const gameRef = firebase.database().ref(`games/${playerState.gameCode}/players/${playerName}`);
-    
-    gameRef.set(0)
+    // Controleer eerst of de game bestaat
+    const gameRef = firebase.database().ref(`games/${gameCode}`);
+    gameRef.once('value')
+        .then((snapshot) => {
+            if (!snapshot.exists()) {
+                alert('Deze game bestaat niet!');
+                return;
+            }
+
+            playerState.gameCode = gameCode;
+            playerState.name = playerName;
+            
+            // Voeg speler toe aan de game
+            return gameRef.child(`players/${playerName}`).set(0);
+        })
         .then(() => {
             document.getElementById('welcome-screen').style.display = 'none';
             document.getElementById('game-screen').style.display = 'block';
