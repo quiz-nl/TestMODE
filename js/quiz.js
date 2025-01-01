@@ -260,15 +260,12 @@ let streakCount = 0;
 let teamGrootte = 'solo'; // 'solo', 'duo', of 'team'
 let behaaldeAchievements = new Set();
 
-// DOM elementen ophalen
-const quizContent = document.getElementById('quiz-content');
-const startBtn = document.getElementById('startBtn');
-const nextBtn = document.getElementById('nextBtn');
-
-// Event listeners toevoegen
+// DOM elementen ophalen en controleren
 document.addEventListener('DOMContentLoaded', () => {
-    startBtn.addEventListener('click', startQuiz);
-    nextBtn.addEventListener('click', volgendeVraag);
+    const startBtn = document.getElementById('start-btn');
+    if (startBtn) {
+        startBtn.addEventListener('click', startQuiz);
+    }
 });
 
 function startQuiz() {
@@ -276,8 +273,13 @@ function startQuiz() {
     huidigeVraag = 0;
     score = 0;
     correcteAntwoorden = 0;
-    startBtn.style.display = 'none';
-    nextBtn.style.display = 'block';
+    
+    const startBtn = document.getElementById('startBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    if (startBtn) startBtn.style.display = 'none';
+    if (nextBtn) nextBtn.style.display = 'block';
+    
     toonVraag();
 }
 
